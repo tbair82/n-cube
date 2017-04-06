@@ -1,4 +1,6 @@
 ### Revision History
+* 3.6.15
+  * Bug fix: Batch updating reference axes would remove transforms
 * 3.6.13/3.6.14
   * Enhancement: Updated reference axes transforms so they won't execute code on the server (support for transforms that execute code remains)
   * Enhancement: Axis supports a new ValueType (CISTRING - case insenstive string)

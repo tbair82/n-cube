@@ -1271,7 +1271,7 @@ target axis: ${destApp} / ${destVersion} / ${destCubeName}.${destAxisName}""")
                     axis.setMetaProperty(ReferenceAxisLoader.TRANSFORM_CUBE_NAME, transformCubeName)
                     axis.setMetaProperty(ReferenceAxisLoader.TRANSFORM_METHOD_NAME, transformMethodName)
 
-                    if (transformApp && transformVersion && transformCubeName && transformMethodName)
+                    if (transformApp && transformVersion && transformCubeName)
                     {   // If transformer cube reference supplied, verify that the cube exists
                         ApplicationID txAppId = new ApplicationID(srcAppId.tenant, transformApp, transformVersion, ReleaseStatus.RELEASE.name(), ApplicationID.HEAD)
                         NCube transformCube = persister.loadCube(txAppId, transformCubeName)
@@ -1280,7 +1280,7 @@ target axis: ${destApp} / ${destVersion} / ${destCubeName}.${destAxisName}""")
                             throw new IllegalArgumentException("""\
 Cannot point reference axis transformer to non-existing cube: ${transformCubeName}. \
 Source axis: ${srcAppId.cacheKey(srcCubeName)}.${srcAxisName}, \
-target axis: ${transformApp} / ${transformVersion} / ${transformCubeName}.${transformMethodName}""")
+target axis: ${transformApp} / ${transformVersion} / ${transformCubeName}""")
                         }
                     }
                     else
