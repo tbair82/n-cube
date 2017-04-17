@@ -7,7 +7,6 @@ import com.cedarsoftware.ncube.util.CdnClassLoader
 import groovy.transform.CompileStatic
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 
 import static com.cedarsoftware.ncube.NCubeConstants.*
@@ -5842,7 +5841,6 @@ class TestWithPreloadedDatabase
         assertEquals(1, NCubeManager.copyBranch(HEAD, BRANCH1))
         assertEquals(1, NCubeManager.copyBranch(HEAD, BRANCH2))
 
-        NCube headCube = NCubeManager.loadCube(HEAD, 'TestBranch')
         NCube cube = NCubeManager.loadCube(BRANCH1, 'TestBranch')
         NCube cube2 = NCubeManager.loadCube(BRANCH2, 'TestBranch')
 
