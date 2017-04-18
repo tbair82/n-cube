@@ -1,4 +1,6 @@
 ### Revision History
+* 3.6.16
+  * Bug fix: Added delta processing for meta-properties on n-cube, axis, and column.
 * 3.6.15
   * Bug fix: Batch updating reference axes would remove transforms
 * 3.6.13/3.6.14
