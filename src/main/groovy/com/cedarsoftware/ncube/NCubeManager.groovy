@@ -225,7 +225,8 @@ class NCubeManager
     static NCube loadCubeById(long id)
     {
         NCube ncube = persister.loadCubeById(id)
-        return prepareCube(ncube)
+        applyAdvices(ncube.applicationID, ncube)
+        return ncube
     }
 
     /**
