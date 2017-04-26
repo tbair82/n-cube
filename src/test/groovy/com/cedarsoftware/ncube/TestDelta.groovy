@@ -2095,7 +2095,7 @@ class TestDelta
     }
 
     @Test
-    void testStuff()
+    void testChangedFlag()
     {
         // create 2 branches (and HEAD) with simple n-cube
         NCube ncube1 = NCubeBuilder.discrete1D
