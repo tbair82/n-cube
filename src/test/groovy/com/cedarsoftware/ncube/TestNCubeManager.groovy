@@ -683,8 +683,8 @@ class TestNCubeManager
         }
         catch (IllegalArgumentException e)
         {
-            assert e.message.contains('could not rename')
-            assert e.message.contains('does not exist')
+            assert e.message.toLowerCase().contains('could not rename')
+            assert e.message.toLowerCase().contains('does not exist')
         }
 
         NCubeManager.updateCube(defaultSnapshotApp, ncube1, true)
