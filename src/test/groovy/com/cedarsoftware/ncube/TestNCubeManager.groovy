@@ -1624,7 +1624,7 @@ class TestNCubeManager
     {
         try
         {
-            NCubeManager.persister.updateBranchCubeHeadSha1(null, 'badSha1')
+            NCubeManager.persister.updateBranchCubeHeadSha1(null, 'branchSha1','badSha1')
         }
         catch (IllegalArgumentException e)
         {
@@ -1632,16 +1632,25 @@ class TestNCubeManager
         }
         try
         {
-            NCubeManager.persister.updateBranchCubeHeadSha1(75, '')
+            NCubeManager.persister.updateBranchCubeHeadSha1(75, '', 'badSha1')
         }
         catch (IllegalArgumentException e)
         {
             assert e.message.toLowerCase().contains('sha-1 cannot be empty')
         }
+        try
+        {
+            NCubeManager.persister.updateBranchCubeHeadSha1(75, 'branchSha1', '')
+        }
+        catch (IllegalArgumentException e)
+        {
+            assert e.message.toLowerCase().contains('head sha-1')
+            assert e.message.toLowerCase().contains('cannot be empty')
+        }
 
         try
         {
-            NCubeManager.persister.updateBranchCubeHeadSha1(75, 'phony')
+            NCubeManager.persister.updateBranchCubeHeadSha1(75, 'branchSha1', 'phony')
         }
         catch (IllegalArgumentException e)
         {

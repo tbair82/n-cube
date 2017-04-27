@@ -1,4 +1,6 @@
 ### Revision History
+* 3.6.17
+  * Bug fix: Update n-cube changed flag during fast foward based on whether sha1 matches headSha1
 * 3.6.16
   * Bug fix: Added delta processing for meta-properties on n-cube, axis, and column.
 * 3.6.15

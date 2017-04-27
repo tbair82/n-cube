@@ -2094,6 +2094,62 @@ class TestDelta
         assert (result[VersionControl.BRANCH_REJECTS] as Map).size() == 0
     }
 
+    @Test
+    void testChangedFlag()
+    {
+        // create 2 branches (and HEAD) with simple n-cube
+        NCube ncube1 = NCubeBuilder.discrete1D
+        String ncubeName = ncube1.name
+        ncube1.applicationID = BRANCH1
+        NCubeManager.updateCube(BRANCH1, ncube1)
+        VersionControl.commitBranch(BRANCH1)
+        VersionControl.updateBranch(BRANCH2)
+
+        // BRANCH1 change TX from 2->20
+        ncube1.setCell(20, [state: 'TX'])
+        NCubeManager.updateCube(BRANCH1, ncube1)
+
+        // BRANCH2 change OH from 1->10 and commit
+        NCube ncube2 = NCubeManager.getCube(BRANCH2, ncubeName)
+        ncube2.setCell(10, [state: 'OH'])
+        NCubeManager.updateCube(BRANCH2, ncube2)
+        VersionControl.commitBranch(BRANCH2)
+
+        // BRANCH1 "steals" OH change from BRANCH2
+        List<Delta> deltas = DeltaProcessor.getDeltaDescription(ncube2, ncube1)
+        List<Delta> deltasToMerge = deltas.findAll { it.description.contains("OH")}
+        NCubeManager.mergeDeltas(BRANCH1, ncubeName, deltasToMerge)
+
+        // Update from HEAD shows fast forward because update was "stolen" previously
+        Map<String, Object> result = VersionControl.updateBranch(BRANCH1)
+        assert (result[VersionControl.BRANCH_ADDS] as Map).size() == 0
+        assert (result[VersionControl.BRANCH_DELETES] as Map).size() == 0
+        assert (result[VersionControl.BRANCH_UPDATES] as Map).size() == 0
+        assert (result[VersionControl.BRANCH_RESTORES] as Map).size() == 0
+        assert (result[VersionControl.BRANCH_FASTFORWARDS] as Map).size() == 1
+        assert (result[VersionControl.BRANCH_REJECTS] as Map).size() == 0
+
+        NCubeInfoDto dto = NCubeManager.search(BRANCH1, ncubeName, null, null)[0]
+        assert dto.changed
+
+        // BRANCH2 change OH from 10->100 and commit
+        ncube2.setCell(100, [state: 'OH'])
+        NCubeManager.updateCube(BRANCH2, ncube2)
+        VersionControl.commitBranch(BRANCH2)
+
+        // Update from HEAD shows update because there's a new change in HEAD
+        result = VersionControl.updateBranch(BRANCH1)
+        assert (result[VersionControl.BRANCH_ADDS] as Map).size() == 0
+        assert (result[VersionControl.BRANCH_DELETES] as Map).size() == 0
+        assert (result[VersionControl.BRANCH_UPDATES] as Map).size() == 1
+        assert (result[VersionControl.BRANCH_RESTORES] as Map).size() == 0
+        assert (result[VersionControl.BRANCH_FASTFORWARDS] as Map).size() == 0
+        assert (result[VersionControl.BRANCH_REJECTS] as Map).size() == 0
+
+        ncube1 = NCubeManager.getCube(BRANCH1, ncubeName)
+        assert 20 == ncube1.getCell([state: 'TX'])
+    }
+
     static void setupMetaPropertyTest()
     {
         NCube ncube = NCubeBuilder.discrete1D
