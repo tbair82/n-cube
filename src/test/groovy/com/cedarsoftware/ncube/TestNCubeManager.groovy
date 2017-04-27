@@ -674,7 +674,7 @@ class TestNCubeManager
     void testRenameNCube()
     {
         NCube ncube1 = NCubeBuilder.testNCube3D_Boolean
-        NCube ncube2 = NCubeBuilder.getTestNCube2D(true)
+        ncube1.applicationID = defaultSnapshotApp
 
         try
         {
@@ -683,32 +683,27 @@ class TestNCubeManager
         }
         catch (IllegalArgumentException e)
         {
-            assertTrue(e.message.contains('Could not rename'))
-            assertTrue(e.message.contains('does not exist'))
+            assert e.message.contains('could not rename')
+            assert e.message.contains('does not exist')
         }
 
         NCubeManager.updateCube(defaultSnapshotApp, ncube1, true)
-        NCubeManager.updateCube(defaultSnapshotApp, ncube2, true)
-
         NCubeManager.renameCube(defaultSnapshotApp, ncube1.name, 'test.Floppy')
 
-        Object[] cubeList = NCubeManager.search(defaultSnapshotApp, 'test.*', null, [(SEARCH_ACTIVE_RECORDS_ONLY):true])
+        List<NCubeInfoDto> cubeList = NCubeManager.search(defaultSnapshotApp, 'test.*', null, [(SEARCH_ACTIVE_RECORDS_ONLY):true])
 
-        assertTrue(cubeList.length == 2)
+        assert 1 == cubeList.size()
 
-        NCubeInfoDto nc1 = (NCubeInfoDto) cubeList[0]
-        NCubeInfoDto nc2 = (NCubeInfoDto) cubeList[1]
+        NCubeInfoDto nc1 = cubeList[0]
 
-        assertTrue(nc1.toString().startsWith('NONE/ncube.test/1.0.0/SNAPSHOT/TEST/test.Age-Gender') || nc2.toString().startsWith('NONE/ncube.test/1.0.0/SNAPSHOT/TEST/test.Age-Gender'))
-        assertTrue(nc1.toString().startsWith('NONE/ncube.test/1.0.0/SNAPSHOT/TEST/test.Floppy') || nc2.toString().startsWith('NONE/ncube.test/1.0.0/SNAPSHOT/TEST/test.Floppy'))
+        assert nc1.toString().startsWith('NONE/ncube.test/1.0.0/SNAPSHOT/TEST/test.Floppy')
+        assert 'test.Floppy' == nc1.name
 
-        assertTrue(nc1.name.equals('test.Floppy') || nc2.name.equals('test.Floppy'))
-        assertFalse(nc1.name.equals('test.Floppy') && nc2.name.equals('test.Floppy'))
-
-        assertTrue(NCubeManager.deleteCubes(defaultSnapshotApp, ['test.Floppy'].toArray(), true))
-        assertTrue(NCubeManager.deleteCubes(defaultSnapshotApp, [ncube2.name].toArray(), true))
-
-        assertFalse(NCubeManager.deleteCubes(defaultSnapshotApp, ['test.Floppy'].toArray(), true))
+        // added to be sure CUBE_VALUE_BIN was not being deleted
+        List<NCubeInfoDto> newRevisions = NCubeManager.getRevisionHistory(defaultSnapshotApp, 'test.Floppy')
+        assert NCubeManager.loadCubeById(newRevisions[0].id as long)
+        List<NCubeInfoDto> oldRevisions = NCubeManager.getRevisionHistory(defaultSnapshotApp, 'test.ValidTrailorConfigs')
+        assert NCubeManager.loadCubeById(oldRevisions[0].id as long)
     }
 
     @Test
