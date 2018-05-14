@@ -2537,7 +2537,10 @@ target axis: ${transformApp} / ${transformVersion} / ${transformCubeName}, user:
             {
                 obsoletePullRequest(prId)
             }
-            catch (IllegalArgumentException ignore) {} // pr was rolled back
+            catch (IllegalArgumentException ignore)
+            {
+                LOG.info("${ignore.message}, pull request ID: ${prId}")
+            }
             connection.commit() // force database changes before throwing exception
             throw e
         }
